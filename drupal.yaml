@@ -99,7 +99,7 @@ mariadb:
       ##
       # storageClass: "-"
       accessMode: ReadWriteOnce
-      size: 8Gi
+      size: 2Gi
 
 ## Kubernetes configuration
 ## For minikube, set this to NodePort, elsewhere use LoadBalancer
@@ -155,7 +155,7 @@ persistence:
     ##
     # storageClass: "-"
     accessMode: ReadWriteOnce
-    size: 8Gi
+    size: 1Gi
 
     ## A manually managed Persistent Volume Claim
     ## Requires persistence.enabled: true
