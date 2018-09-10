@@ -1,0 +1,27 @@
+{{- if and .Values.persistence.enabled (not .Values.persistence.drupalthemes.existingClaim) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "drupal.fullname" . }}-drupalthemes
+  labels:
+    app: {{ template "drupal.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  {{- if .Values.persistence.drupalthemes.hostPath }}
+  storageClassName: ""
+  {{- end }}
+  accessModes:
+    - {{ .Values.persistence.drupalthemes.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.drupalthemes.size | quote }}
+{{- if and .Values.persistence.drupalthemes.storageClass (not .Values.persistence.drupalthemes.hostPath) -}}
+{{- if (eq "-" .Values.persistence.drupalthemes.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.persistence.drupalthemes.storageClass }}"
+{{- end }}
+{{- end }}
+{{- end -}}

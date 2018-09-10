@@ -1,0 +1,27 @@
+{{- if and .Values.persistence.enabled (not .Values.persistence.drupalmod.existingClaim) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "drupal.fullname" . }}-drupalmod
+  labels:
+    app: {{ template "drupal.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  {{- if .Values.persistence.drupalmod.hostPath }}
+  storageClassName: ""
+  {{- end }}
+  accessModes:
+    - {{ .Values.persistence.drupalmod.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.drupalmod.size | quote }}
+{{- if and .Values.persistence.drupalmod.storageClass (not .Values.persistence.drupalmod.hostPath) -}}
+{{- if (eq "-" .Values.persistence.drupalmod.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.persistence.drupalmod.storageClass }}"
+{{- end }}
+{{- end }}
+{{- end -}}

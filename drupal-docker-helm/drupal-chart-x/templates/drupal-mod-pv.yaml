@@ -1,0 +1,13 @@
+{{- if and .Values.persistence.enabled .Values.persistence.drupalmod.hostPath (not .Values.persistence.drupalmod.existingClaim) -}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ template "drupal.fullname" . }}-drupalmod
+spec:
+  accessModes:
+    - {{ .Values.persistence.drupalmod.accessMode | quote }}
+  capacity:
+    storage: {{ .Values.persistence.drupalmod.size | quote }}
+  hostPath:
+    path: {{ .Values.persistence.drupalmod.hostPath | quote }}
+{{- end -}}

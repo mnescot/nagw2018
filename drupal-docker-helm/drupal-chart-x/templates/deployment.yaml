@@ -1,0 +1,204 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "drupal.fullname" . }}
+  labels:
+    app: {{ template "drupal.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "drupal.fullname" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: "{{ .Release.Name }}"
+    spec:
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+      {{- end}}
+      {{- end }}
+      containers:
+      - name: {{ template "drupal.fullname" . }}
+        image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+        {{- if .Values.allowEmptyPassword }}
+          value: "yes"
+        {{- else }}
+          value: "no"
+        {{- end }}
+
+
+        - name: MARIADB_HOST
+        {{- if .Values.mariadb.enabled }}
+          value: {{ template "drupal.mariadb.fullname" . }}
+        {{- else }}
+          value: {{ default "" .Values.externalDatabase.host | quote }}
+        {{- end }}
+        - name: MARIADB_PORT_NUMBER
+          value: "3306"
+        
+        
+        - name: DRUPALDBHOST
+        {{- if .Values.mariadb.enabled }}
+          value: {{ template "drupal.mariadb.fullname" . }}
+        {{- else }}
+          value: {{ default "" .Values.externalDatabase.host | quote }}
+        {{- end }}
+
+
+
+
+
+
+
+        - name: DRUPAL_DATABASE_NAME
+        {{- if .Values.mariadb.enabled }}
+          value: {{ default "" .Values.mariadb.db.name | quote }}
+        {{- else }}
+          value: {{ default "" .Values.externalDatabase.database | quote }}
+        {{- end }}
+       
+        - name: DRUPALDB
+        {{- if .Values.mariadb.enabled }}
+          value: {{ default "" .Values.mariadb.db.name | quote }}
+        {{- else }}
+          value: {{ default "" .Values.externalDatabase.database | quote }}
+        {{- end }}
+
+
+
+
+
+
+
+
+        - name: DRUPAL_DATABASE_USER
+        {{- if .Values.mariadb.enabled }}
+          value: {{ default "" .Values.mariadb.db.user | quote }}
+        {{- else }}
+          value: {{ default "" .Values.externalDatabase.user | quote }}
+        {{- end }}
+
+        - name: DRUPALDBUSER
+        {{- if .Values.mariadb.enabled }}
+          value: {{ default "" .Values.mariadb.db.user | quote }}
+        {{- else }}
+          value: {{ default "" .Values.externalDatabase.user | quote }}
+        {{- end }}
+
+
+
+        - name: DRUPAL_DATABASE_PASSWORD
+        {{- if .Values.mariadb.enabled }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "drupal.mariadb.fullname" . }}
+              key: mariadb-password
+        {{- else }}
+          value: {{ default "" .Values.externalDatabase.password | quote }}
+        {{- end }}
+
+
+        - name: DRUPALDBPASS
+        {{- if .Values.mariadb.enabled }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "drupal.mariadb.fullname" . }}
+              key: mariadb-password
+        {{- else }}
+          value: {{ default "" .Values.externalDatabase.password | quote }}
+        {{- end }}
+
+        {{- if .Values.drupalProfile }}
+
+        - name: DRUPAL_PROFILE
+          value: {{ .Values.drupalProfile | quote }}
+        {{- end }}
+        {{- if .Values.drupalUsername }}
+
+        - name: DRUPAL_USERNAME
+          value: {{ .Values.drupalUsername | quote }}
+        {{- end }}
+
+        - name: DRUPAL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "drupal.fullname" . }}
+              key: drupal-password
+        {{- if .Values.drupalEmail }}
+
+
+        - name: DRUPALSALT
+          valueFrom:
+            secretKeyRef:
+             name: {{ template "drupal.fullname" . }}
+             key: DRUPALSALT
+
+
+
+        - name: DRUPAL_EMAIL
+          value: {{ .Values.drupalEmail | quote }}
+        {{- end }}
+{{- if .Values.extraVars }}
+{{ toYaml .Values.extraVars | indent 8 }}
+{{- end }}
+        ports:
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443
+
+  
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        volumeMounts:
+        - name: drupalfiles
+          mountPath: {{ .Values.volumeMounts.drupalfiles.mountPath }}
+        {{- if .Values.volumeMounts.drupalmod.mountPath }}
+        - name: drupalmod
+          mountPath: {{ .Values.volumeMounts.drupalmod.mountPath }}
+        {{- end }}
+
+
+        {{- if .Values.volumeMounts.drupalthemes.mountPath }}
+        - name: drupalthemes
+          mountPath: {{ .Values.volumeMounts.drupalthemes.mountPath }}
+        {{- end }}
+
+      volumes:
+      - name: drupalfiles
+      {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ template "drupal.fullname" . }}-drupalfiles
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+
+
+      {{- if .Values.volumeMounts.drupalmod.mountPath }}
+      - name: drupalmod
+      {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ template "drupal.fullname" . }}-drupalmod
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+      {{- end }}
+
+
+      {{- if .Values.volumeMounts.drupalthemes.mountPath }}
+      - name: drupalthemes
+      {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ template "drupal.fullname" . }}-drupalthemes
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+      {{- end }}

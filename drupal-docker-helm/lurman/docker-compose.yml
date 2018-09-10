@@ -1,0 +1,46 @@
+version: '2'
+services:
+
+ drupal:
+    build: ./web
+    volumes_from:
+        - storage-drupal
+    links:
+        - "db:mysql"
+    ports:
+        - "80:80"
+    environment:
+        - DRUPALDB=somedb
+        - DRUPALDBUSER=someuser     
+        - DRUPALDBPASS=thispasswordsucks
+ db:
+    image: mariadb
+    volumes:
+        - sqldata:/var/lib/mysql
+        - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    environment:
+        - MYSQL_USER=someuser
+        - MYSQL_PASSWORD=thispasswordsucks
+        - MYSQL_DATABASE=somedb
+        - MYSQL_ROOT_PASSWORD=thispasswordsuckstoo
+ storage-drupal:
+    image: drupal:8
+    volumes:
+        - ~/drupalmoddata:/var/www/html/modules
+        - profiledata:/var/www/html/profiles
+        - ~/drupalthemedata:/var/www/html/themes
+        - ~/drupalfiledata:/var/www/html/sites/default/files
+volumes:
+ sqldata:
+  driver: local
+  #d moddata:
+  # driver: local
+ profiledata:
+  driver: local
+  # themedata:
+  #  driver: local
+  # sitedata:
+  # driver: local
+
+
+
