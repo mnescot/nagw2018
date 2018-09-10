@@ -1,0 +1,23 @@
+[
+  {
+    "ParameterKey": "pDBPassword",
+    "ParameterValue": $MYSECRETPASS
+  }, 
+  {
+    "ParameterKey": "pEC2KeyPairBastion",
+    "ParameterValue": "iso-bastion-nagw"
+  }
+  {
+    "ParameterKey": "pAvailaiablityZoneA",
+    "ParameterValue": "us-west-2b"
+  }, 
+  {
+    "ParameterKey": "pAvailabilityZoneB",
+    "ParameterValue": "us-east-1a"
+  }
+  {
+    "ParameterKey": "pEC2KeyPair",
+    "ParameterValue": "iso-ec2-nagw"
+  }
+]
+

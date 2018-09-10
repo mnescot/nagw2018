@@ -1,0 +1,42 @@
+docker run -it --entrypoint bin/bash ftw
+
+
+
+kubectl create clusterrolebinding elevate-privy --clusterrole=cluster-admin --serviceaccount=default
+
+
+
+kubectl -n <namespace> get vault example -o jsonpath='{.status.vaultStatus.sealed[0]}' | xargs -0 -I {} kubectl -n <namespace> port-forward {} 8200
+vault init
+
+
+
+apiVersion: "vault.security.coreos.com/v1alpha1"
+kind: "VaultService"
+metadata:
+  name: "example"
+spec:
+  nodes: 2
+  version: "0.9.1-0"
+
+
+
+kubectl -n <namespace> get vault example -o jsonpath='{.status.vaultStatus.sealed[0]}' | xargs -0 -I {} kubectl -n <namespace> port-forward {} 8200 vault init
+
+
+ 140.107.89.100
+
+
+
+ jenkins-admin-password: {{ randAlphaNum 10 | b64enc | quote }}
+ 17   aws-access-key: {{ .Values.awsaccesskey | b64enc | quote }}
+ 18   aws-secret-key: {{ .Values.awssecretkey | b64enc | quote }}
+ 19   aws-default-location: {{ .Values.awsdefaultlocation | b64enc | quote }}
+
+
+
+helm install -f values.yaml --set awsaccesskey=$AWSACCESSKEY --set awssecretkey=$AWSSECRETKEY --set awsdefaultregion=$AWSDEFAULTREGION helm-local/jenkins-k8s
+
+
+
+
