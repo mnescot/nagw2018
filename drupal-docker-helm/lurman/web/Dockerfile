@@ -22,3 +22,7 @@ RUN curl http://drupalconsole.com/installer -L -o drupal.phar
 RUN mv drupal.phar /usr/local/bin/drupal && chmod +x /usr/local/bin/drupal
 # VOLUME /var/www/html/drupal
 COPY ./settings.php /var/www/html/sites/default
+COPY ./composer.json /var/www/html
+COPY ./composer.lock /var/www/html
+COPY docker-php-entrypoint /usr/local/bin
+RUN ["chmod", "+x", "/usr/local/bin/docker-php-entrypoint"]

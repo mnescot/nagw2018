@@ -12,7 +12,7 @@ services:
     environment:
         - DRUPALDB=somedb
         - DRUPALDBUSER=someuser     
-        - DRUPALDBPASS=thispasswordsucks
+        - DRUPALDBPASS=thispassword
  db:
     image: mariadb
     volumes:
@@ -20,9 +20,9 @@ services:
         - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
     environment:
         - MYSQL_USER=someuser
-        - MYSQL_PASSWORD=thispasswordsucks
+        - MYSQL_PASSWORD=thispassword
         - MYSQL_DATABASE=somedb
-        - MYSQL_ROOT_PASSWORD=thispasswordsuckstoo
+        - MYSQL_ROOT_PASSWORD=thispassword2
  storage-drupal:
     image: drupal:8
     volumes:
