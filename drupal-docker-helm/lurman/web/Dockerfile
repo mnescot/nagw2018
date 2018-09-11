@@ -1,12 +1,13 @@
 FROM drupal:8
 # Add common extensions
-ENV DRUPALDB=mydb
+ENV DRUPALDB=somedb
 ENV DRUPALDBPASS=mypass
 ENV DRUPALDBUSER=myuser
-ENV DRUPALDBHOST=myhost
+ENV DRUPALDBHOST=mysql
 ENV DRUPALSALT=3433fcccfff
+ENV FILESURL=https://github.com/mnescot/nagw2018/blob/master/drupal-docker-helm/html/sites/default/myfiles.tgz
 
-RUN apt-get update && apt-get install -y mysql-client
+RUN apt-get update && apt-get install -y mysql-client git
 RUN docker-php-ext-install pdo_mysql
 
 # Install Composer.
@@ -24,5 +25,3 @@ RUN mv drupal.phar /usr/local/bin/drupal && chmod +x /usr/local/bin/drupal
 COPY ./settings.php /var/www/html/sites/default
 COPY ./composer.json /var/www/html
 COPY ./composer.lock /var/www/html
-COPY docker-php-entrypoint /usr/local/bin
-RUN ["chmod", "+x", "/usr/local/bin/docker-php-entrypoint"]

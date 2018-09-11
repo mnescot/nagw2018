@@ -1,0 +1,7 @@
+#!/bin/sh
+/bin/bash /usr/local/bin/docker-php-entrypoint &
+cd /var/www/html
+composer install
+curl -o /var/www/html/sites/default/files/myfiles.tgz $FILESURL
+# /bin/bash /usr/local/bin/docker-php-entrypoint
+

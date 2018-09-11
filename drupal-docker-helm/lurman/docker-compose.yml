@@ -2,7 +2,7 @@ version: '2'
 services:
 
  drupal:
-    build: ./web
+    image: mnescot/drupal8
     volumes_from:
         - storage-drupal
     links:
@@ -13,6 +13,7 @@ services:
         - DRUPALDB=somedb
         - DRUPALDBUSER=someuser     
         - DRUPALDBPASS=thispassword
+        - DRUPALDBHOST=mysql  
  db:
     image: mariadb
     volumes:
