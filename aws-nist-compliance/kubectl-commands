@@ -24,7 +24,7 @@ spec:
 kubectl -n <namespace> get vault example -o jsonpath='{.status.vaultStatus.sealed[0]}' | xargs -0 -I {} kubectl -n <namespace> port-forward {} 8200 vault init
 
 
- 140.107.89.100
+
 
 
 
